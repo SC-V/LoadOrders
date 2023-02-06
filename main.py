@@ -94,7 +94,7 @@ def create_order(barcode: str, comment: str, customer_address: str, fname: str, 
     print(data)
     offer_to_approve = data['offers'][0]['offer_id']
     print(offer_to_approve)
-    url = f"{URL}/api/b2b/platform/offers/confirm"
+    url = f"{URL}/confirm"
     payload = json.dumps({
         "offer_id": offer_to_approve
     })
