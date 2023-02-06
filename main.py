@@ -133,5 +133,5 @@ def load_mex_wh_orders():
 
 st.markdown(f"# Load orders")
 
-if st.sidebar.button("Upload from google sheets", type="primary"):
+if st.button("Upload from google sheets", type="primary"):
     load_mex_wh_orders()
