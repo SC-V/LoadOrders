@@ -36,7 +36,7 @@ def create_order(barcode: str, comment: str, customer_address: str, fname: str, 
         "last_mile_policy": "time_interval",
         "source": {
             "platform_station": {
-                "platform_id": STATIONS["client"]
+                "platform_id": STATIONS[client]
             }
         },
         "destination": {
@@ -85,7 +85,7 @@ def create_order(barcode: str, comment: str, customer_address: str, fname: str, 
     })
     headers = {
         'Content-Type': 'application/json',
-        'Authorization': f"Bearer {API_KEYS['client']}"
+        'Authorization': f"Bearer {API_KEYS[client]}"
     }
     try:
         response = requests.request("POST", url, headers=headers, data=payload)
@@ -139,7 +139,7 @@ def load_mex_wh_orders():
     print(parsed_addresses)
 
 
-st.markdown(f"# Load warehouse orders")
+st.markdown(f"# Load orders")
 st.caption(f"Add orders here, then press upload button: {LOAD_LINK}", unsafe_allow_html=True)
-if st.button("Upload orders", type="primary"):
+if st.sidebar.button("Upload from Google sheets", type="primary"):
     load_mex_wh_orders()
