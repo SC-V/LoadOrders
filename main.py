@@ -25,8 +25,7 @@ def normalize(phone: str):
     return phone
 
 
-def create_order(barcode: str, comment: str, customer_address: str, fname: str, lname: str, phone: str, client: str,
-                 lat: float, lon: float):
+def create_order(barcode: str, comment: str, customer_address: str, fname: str, lname: str, phone: str, client: str):
     url = f"{URL}/create?dump=eventlog"
     normalized_phone = normalize(phone)
     payload = json.dumps({
@@ -45,9 +44,7 @@ def create_order(barcode: str, comment: str, customer_address: str, fname: str, 
             "custom_location": {
                 "details": {
                     "full_address": customer_address.replace("#", "").replace("º", "").replace(",,", ",")
-                },
-                "latitude": lat,
-                "longitude": lon
+                }
             }
         },
         "items": [
@@ -135,9 +132,7 @@ def load_mex_wh_orders():
             fname=row['Recipient'],
             lname="-",
             phone=row['Phone'],
-            client=row['Client'],
-            lat=row['Lat'],
-            lon=row['Lon'])
+            client=row['Client'])
         result.append([row['Address'], response, status_code])
     parsed_addresses = pd.DataFrame(result, columns=['Address', 'Response', 'RCode'])
     st.dataframe(parsed_addresses)
