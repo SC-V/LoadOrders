@@ -25,7 +25,8 @@ def normalize(phone: str):
     return phone
 
 
-def create_order(barcode: str, comment: str, customer_address: str, fname: str, lname: str, phone: str, client: str):
+def create_order(barcode: str, comment: str, customer_address: str, fname: str, lname: str, phone: str, client: str,
+                 lat: float, lon: float):
     url = f"{URL}/create?dump=eventlog"
     normalized_phone = normalize(phone)
     payload = json.dumps({
@@ -44,7 +45,9 @@ def create_order(barcode: str, comment: str, customer_address: str, fname: str, 
             "custom_location": {
                 "details": {
                     "full_address": customer_address.replace("#", "").replace("º", "").replace(",,", ",")
-                }
+                },
+                "latitude": lat,
+                "longitude": lon
             }
         },
         "items": [
@@ -107,7 +110,7 @@ def create_order(barcode: str, comment: str, customer_address: str, fname: str, 
     })
     headers = {
         'Content-Type': 'application/json',
-        'Authorization': f"Bearer {API_KEYS[client]}"
+        'Authorization': f"Bearer {API_KEYS[client]}"  # Set "Bearer <TOKEN> here"
     }
     try:
         response = requests.request("POST", url, headers=headers, data=payload)
@@ -132,14 +135,16 @@ def load_mex_wh_orders():
             fname=row['Recipient'],
             lname="-",
             phone=row['Phone'],
-            client=row['Client'])
+            client=row['Client'],
+            lat=row['Lat'],
+            lon=row['Lon'])
         result.append([row['Address'], response, status_code])
     parsed_addresses = pd.DataFrame(result, columns=['Address', 'Response', 'RCode'])
     st.dataframe(parsed_addresses)
     print(parsed_addresses)
 
 
-st.markdown(f"# Load warehouse orders")
+st.markdown(f"# Load orders")
 st.caption(f"Add orders here, then press upload button: {LOAD_LINK}", unsafe_allow_html=True)
-if st.button("Upload orders", type="primary"):
+if st.sidebar.button("Upload from Google sheets", type="primary"):
     load_mex_wh_orders()
