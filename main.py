@@ -139,7 +139,7 @@ def load_mex_wh_orders():
     print(parsed_addresses)
 
 
-st.markdown(f"# Load orders")
+st.markdown(f"# Load warehouse orders")
 st.caption(f"Add orders here, then press upload button: {LOAD_LINK}", unsafe_allow_html=True)
-if st.sidebar.button("Upload from Google sheets", type="primary"):
+if st.button("Upload orders", type="primary"):
     load_mex_wh_orders()
