@@ -20,6 +20,7 @@ def read_orders_frame() -> pd.DataFrame:
 
 
 def normalize(phone: str):
+    phone = str(phone)
     if len(phone) == 10 and not (phone.startswith("52") or phone.startswith("+52")):
         phone = "+52" + phone
     return phone
