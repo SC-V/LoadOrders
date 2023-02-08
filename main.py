@@ -107,7 +107,7 @@ def create_order(barcode: str, comment: str, customer_address: str, fname: str, 
     })
     headers = {
         'Content-Type': 'application/json',
-        'Authorization': f"Bearer {API_KEYS['client']}"  # Set "Bearer <TOKEN> here"
+        'Authorization': f"Bearer {API_KEYS[client]}"
     }
     try:
         response = requests.request("POST", url, headers=headers, data=payload)
