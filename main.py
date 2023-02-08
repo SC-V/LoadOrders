@@ -6,9 +6,9 @@ from io import BytesIO
 
 ORD_SHEET_ID = st.secrets["ORD_SHEET_ID"]
 URL = st.secrets["URL"]
-API_KEY = st.secrets["API_KEY"]
-STATION_ID = st.secrets["STATION_ID"]
-
+API_KEYS = st.secrets["API_KEYS"]
+STATIONS = st.secrets["STATIONS"]
+LOAD_LINK = st.secrets["LOAD_LINK"]
 
 def read_orders_frame() -> pd.DataFrame:
     request = requests.get(f'https://docs.google.com/spreadsheets/d/{ORD_SHEET_ID}/export?gid=0&format=csv',
@@ -19,24 +19,31 @@ def read_orders_frame() -> pd.DataFrame:
     return orders_to_load
 
 
-def create_order(barcode: str, comment: str, customer_address: str, fname: str, lname: str, phone: str):
+def normalize(phone: str):
+    if len(phone) == 10 and not (phone.startswith("52") or phone.startswith("+52")):
+        phone = "+52" + phone
+    return phone
+
+
+def create_order(barcode: str, comment: str, customer_address: str, fname: str, lname: str, phone: str, client: str):
     url = f"{URL}/create?dump=eventlog"
+    normalized_phone = normalize(phone)
     payload = json.dumps({
         "info": {
-            "operator_request_id": f"mex-magico-{barcode}",
+            "operator_request_id": f"WH-{barcode}",
             "comment": comment
         },
         "last_mile_policy": "time_interval",
         "source": {
             "platform_station": {
-                "platform_id": STATION_ID
+                "platform_id": STATIONS["client"]
             }
         },
         "destination": {
             "type": "custom_location",
             "custom_location": {
                 "details": {
-                    "full_address": customer_address.replace("#", "").replace("º", "")
+                    "full_address": customer_address.replace("#", "").replace("º", "").replace(",,", ",")
                 }
             }
         },
@@ -63,7 +70,7 @@ def create_order(barcode: str, comment: str, customer_address: str, fname: str, 
                 "physical_dims": {
                     "predefined_volume": 800
                 },
-                "description": "YD almacen orden",
+                "description": "Yango Delivery almacen orden",
                 "barcode": f"{barcode}"
             }
         ],
@@ -73,12 +80,12 @@ def create_order(barcode: str, comment: str, customer_address: str, fname: str, 
         "recipient_info": {
             "first_name": fname,
             "last_name": lname,
-            "phone": f"+{str(phone)}"
+            "phone": normalized_phone
         }
     })
     headers = {
         'Content-Type': 'application/json',
-        'Authorization': f"Bearer {API_KEY}"
+        'Authorization': f"Bearer {API_KEYS['client']}"
     }
     try:
         response = requests.request("POST", url, headers=headers, data=payload)
@@ -100,7 +107,7 @@ def create_order(barcode: str, comment: str, customer_address: str, fname: str, 
     })
     headers = {
         'Content-Type': 'application/json',
-        'Authorization': f"Bearer {API_KEY}"  # Set "Bearer <TOKEN> here"
+        'Authorization': f"Bearer {API_KEYS['client']}"  # Set "Bearer <TOKEN> here"
     }
     try:
         response = requests.request("POST", url, headers=headers, data=payload)
@@ -124,7 +131,8 @@ def load_mex_wh_orders():
             customer_address=row['Address'],
             fname=row['Recipient'],
             lname="-",
-            phone=row['Phone'])
+            phone=row['Phone'],
+            client=row['Client'])
         result.append([row['Address'], response, status_code])
     parsed_addresses = pd.DataFrame(result, columns=['Address', 'Response', 'RCode'])
     st.dataframe(parsed_addresses)
@@ -132,6 +140,6 @@ def load_mex_wh_orders():
 
 
 st.markdown(f"# Load orders")
-
-if st.button("Upload from google sheets", type="primary"):
+st.caption(f"Add orders here, then press upload button: {LOAD_LINK}", unsafe_allow_html=True)
+if st.sidebar.button("Upload from Google sheets", type="primary"):
     load_mex_wh_orders()
