@@ -31,7 +31,7 @@ def create_order(barcode: str, comment: str, customer_address: str, fname: str, 
     normalized_phone = normalize(phone)
     payload = json.dumps({
         "info": {
-            "operator_request_id": f"WH-{barcode}",
+            "operator_request_id": f"{barcode}",
             "comment": comment
         },
         "last_mile_policy": "time_interval",
