@@ -140,11 +140,14 @@ def load_mex_wh_orders():
     print(parsed_addresses)
 
 
-st.markdown(f"# Load orders")
+st.markdown(f"# Orders load and routing")
+
+st.subheader("Load orders", anchor=None)
 st.caption(f"Add orders here, then press upload button: {LOAD_LINK}", unsafe_allow_html=True)
-if st.sidebar.button("Upload from Google sheets", type="primary"):
+if st.button("Upload from Google sheets", type="primary"):
     load_mex_wh_orders()
-    
+
+st.subheader("Get routing parameters", anchor=None)
 interval_start, interval_end = st.select_slider(
     'Select delivery window',
     options=['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10',
