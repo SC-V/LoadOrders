@@ -185,7 +185,7 @@ routing_parameters = {
         "global_proximity_factor": global_proximity_factor
     }
 }
-routing_parameters = json.dumps(routing_parameters, indent=4)
+routing_parameters = json.dumps(routing_parameters, indent=2)
 
 st.code(routing_parameters, language="json")
 
