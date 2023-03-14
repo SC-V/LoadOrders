@@ -33,7 +33,7 @@ def create_order(barcode: str, comment: str, customer_address: str, fname: str, 
     payload = json.dumps({
         "info": {
             "operator_request_id": f"{barcode}",
-            "comment": f"direccion original: {customer_address}"
+            "comment": f"direccion original: {customer_address} | {comment}"
         },
         "last_mile_policy": "time_interval",
         "source": {
@@ -129,7 +129,7 @@ def load_mex_wh_orders():
         print(f"ADDRESS: {row['Address']}")
         response, status_code = create_order(
             barcode=row['Barcode'],
-            comment="Yango Warehouse order",
+            comment=row['Comment'],
             customer_address=row['Address'],
             fname=row['Recipient'],
             lname="-",
