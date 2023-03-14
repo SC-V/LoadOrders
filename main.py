@@ -32,7 +32,7 @@ def create_order(barcode: str, comment: str, customer_address: str, fname: str, 
     payload = json.dumps({
         "info": {
             "operator_request_id": f"{barcode}",
-            "comment": comment
+            "comment": f"direccion original: {customer_address}"
         },
         "last_mile_policy": "time_interval",
         "source": {
