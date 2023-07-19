@@ -128,7 +128,7 @@ def load_mex_wh_orders():
     for index, row in all_orders.iterrows():
         print(f"ADDRESS: {row['Address']}")
         response, status_code = create_order(
-            barcode=row['Barcode'],
+            barcode=row['ID order'],
             comment=row['Comment'],
             customer_address=row['Address'],
             fname=row['Recipient'],
